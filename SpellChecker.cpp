@@ -1,5 +1,6 @@
 #include <string>
 #include "SpellChecker.h"
+/*Testing!*/
 
 /**
 Construct a SpellChecker.
