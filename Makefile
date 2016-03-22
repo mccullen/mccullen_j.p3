@@ -5,13 +5,13 @@
 CC = g++
 CFLAGS = -g #-Wall
 
-all: spellCheck
+all: spellCheck.exe
 
-spellCheck: spellCheck.o SpellChecker.o
-	$(CC) $(CFLAGS) -o spellCheck spellCheck.o SpellChecker.o
+spellCheck.exe: spellCheck.o SpellChecker.o
+	$(CC) $(CFLAGS) -o spellCheck.exe spellCheck.o SpellChecker.o
 
 SpellChecker.o: SpellChecker.cpp
 	$(CC) $(CFLAGS) -c SpellChecker.cpp
 
 clean:
-	rm -f spellCheck *.o *~
+	rm -f spellCheck.exe *.o *~
