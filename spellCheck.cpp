@@ -6,6 +6,7 @@ Description:
 
 #include <iostream>
 #include <stdlib.h>
+#include "SpellChecker.h"
 
 using namespace std;
 
@@ -32,5 +33,8 @@ int main(int argc, char** argv)
 	{
 		editDistance = atoi(argv[EDIT_DISTANCE_ARG]);
 	}
+
+	SpellChecker tester("lexicon.txt");
+	cout << tester.editDistance("boat", "boot") << endl;
 	
 }
