@@ -1,6 +1,7 @@
 #include <string>
 #include <algorithm>
 #include "SpellChecker.h"
+#include <algorithm>
 /*Testing!*/
 
 /**
@@ -10,6 +11,16 @@ SpellChecker::SpellChecker(std::string lexiconFile)
 {
 }
 
+
+
+
+
+// Utility function to find minimum of three numbers
+int min2(int x, int y, int z) 
+{
+	return std::min(std::min(x, y), z);
+}
+
 /**
 Get the edit distance for two words.
 
@@ -17,48 +28,47 @@ Get the edit distance for two words.
 @param secondWord The second word to compare.
 @return The edit distance between firstWord and secondWord.
 */
-int SpellChecker::editDistance(std::string firstWord,
-	std::string secondWord)
+int SpellChecker::editDistance(std::string str1,
+	std::string str2)
 {
-  // Make temprary constants
-  const int firstLength = firstWord.length();
-  const int secondLength = secondWord.length();
-  // Create a temporary table to store different editdistances
-  int edTable[firstLength + 1][secondLength + 1];
-  
-  // Fill the table
-  for (int i=0; i<=firstLength; i++)
-  {
-    for (int j=0; j<=secondLength; i++)
-      {
-	// If the first word is empty,
-	// Can only insert all of the second word
-	if(i==0)
-	  edTable[i][j] = j;
-	
-	// If the second word is empty,
-	// Can only insert all of the first word
-	if(j==0)
-	  edTable[i][j] = i;
 
-	// If the last two characters are the same,
-	// Move on to the rest of the string
-	else if(firstWord[i-1] == secondWord[j-1])
-	  edTable[i][j] = edTable[i-1][j-1];
+	const int m = str1.length();
+	const int n = str2.length();
 
-	// If the last two characters are different,
-	// find the min off all the possible changes
-	// Insert
-	// Remove
-	// Replace
-	else
-	  edTable[i][j] = 1 + std::min(std::min(edTable[i][j-1],
-				      edTable[i-1][j]),
-				  edTable[i-1][j-1]);
-      }
-  }
+	// Create a table to store results of subproblems
+	int dp[m+1][n+1];
+ 
+	// Fill d[][] in bottom up manner
+	for (int i=0; i<=m; i++)
+	{
+		for (int j=0; j<=n; j++)
+		{
+			// If first string is empty, only option is to
+			// isnert all characters of second string
+			if (i==0)
+				dp[i][j] = j;  // Min. operations = j
 
-  return edTable[firstLength][secondLength];
+			// If second string is empty, only option is to
+			// remove all characters of second string
+			else if (j==0)
+				dp[i][j] = i; // Min. operations = i
+
+			// If last characters are same, ignore last char
+			// and recur for remaining string
+			else if (str1[i-1] == str2[j-1])
+				dp[i][j] = dp[i-1][j-1];
+
+			// If last character are different, consider all
+			// possibilities and find minimum
+			else
+				dp[i][j] = 1 + min2(dp[i][j-1],  // Insert
+					dp[i-1][j],  // Remove
+					dp[i-1][j-1]); // Replace
+		}
+	}
+
+	return dp[m][n];
+
 }
 
 /**
