@@ -28,47 +28,57 @@ Get the edit distance for two words.
 @param secondWord The second word to compare.
 @return The edit distance between firstWord and secondWord.
 */
-int SpellChecker::editDistance(std::string str1,
-	std::string str2)
+int SpellChecker::editDistance(std::string firstWord,
+	std::string secondWord)
 {
+	// Store length of the words.
+	const int FIRST_LENGTH = firstWord.length();
+	const int SECOND_LENGTH = secondWord.length();
 
-	const int m = str1.length();
-	const int n = str2.length();
-
-	// Create a table to store results of subproblems
-	int dp[m+1][n+1];
+	// Create a table to hold the edit distances of subproblems.
+	int editDistanceTable[FIRST_LENGTH+1][SECOND_LENGTH+1];
  
-	// Fill d[][] in bottom up manner
-	for (int i=0; i<=m; i++)
+	// Fill editDistanceTable from the bottom up
+
+	// For every character in the firstWord
+	for (int i=0; i<=FIRST_LENGTH; i++)
 	{
-		for (int j=0; j<=n; j++)
+		// For every character in the secondWord
+		for (int j=0; j<=SECOND_LENGTH; j++)
 		{
-			// If first string is empty, only option is to
-			// isnert all characters of second string
+			// if firstWord is empty (has length of zero)
 			if (i==0)
-				dp[i][j] = j;  // Min. operations = j
+			{
+				// the edit distance is the length of firstWord.
+				editDistanceTable[i][j] = j;
+			}
 
-			// If second string is empty, only option is to
-			// remove all characters of second string
+			// if the secondWord is empty
 			else if (j==0)
-				dp[i][j] = i; // Min. operations = i
+			{
+				// the edit distance is the length of secondWord.
+				editDistanceTable[i][j] = i;
+			}
 
-			// If last characters are same, ignore last char
-			// and recur for remaining string
-			else if (str1[i-1] == str2[j-1])
-				dp[i][j] = dp[i-1][j-1];
+			// if the last characters are the same
+			else if (firstWord[i-1] == secondWord[j-1])
+			{
+				// move on to the next character.
+				editDistanceTable[i][j] = editDistanceTable[i-1][j-1];
+			}
 
-			// If last character are different, consider all
-			// possibilities and find minimum
+			// if the last characters are different
 			else
-				dp[i][j] = 1 + min2(dp[i][j-1],  // Insert
-					dp[i-1][j],  // Remove
-					dp[i-1][j-1]); // Replace
+			{
+				// the edit distance is the minimum of inserting, removing, or replacing.
+				editDistanceTable[i][j] = 1 + min2(editDistanceTable[i][j-1],  // Insert
+					editDistanceTable[i-1][j],  // Remove
+					editDistanceTable[i-1][j-1]); // Replace
+			}
 		}
 	}
 
-	return dp[m][n];
-
+	return editDistanceTable[FIRST_LENGTH][SECOND_LENGTH];
 }
 
 /**
