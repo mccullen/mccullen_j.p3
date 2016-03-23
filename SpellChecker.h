@@ -52,6 +52,35 @@ public:
 	Destruct a SpellChecker.
 	*/
 	virtual ~SpellChecker();
+private:
+	// Node for the BK tree which stores the words.
+	class BKNode
+	{
+	public:
+		size_t EditDistance;
+		std::string Word;
+		std::list<BKNode*> Children;
+	};
+
+	/**
+	Insert word into BKTree.
+
+	@param word Word to insert into the BKTree.
+	@return True if the word was inserted (not a duplicate).
+	*/
+	virtual bool insert(const std::string& word);
+
+	/**
+	Helper function for insert in order to do recursive call.
+
+	@param word Word to insert into th BKTree.
+	@param pNode The current node.
+	@return True if the word was inserted (not a duplicate).
+	*/
+	//virtual bool insertAux(const std::string& word, BKNode*& pNode);
+
+	// Pointer to the root node of the word tree.
+	BKNode* _pRoot;
 };
 
 #endif // SPELL_CHECKER_H

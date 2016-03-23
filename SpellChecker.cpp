@@ -2,18 +2,66 @@
 #include <algorithm>
 #include "SpellChecker.h"
 #include <algorithm>
-/*Testing!*/
+#include <fstream>
+
+using namespace std;
 
 /**
 Construct a SpellChecker.
 */
-SpellChecker::SpellChecker(std::string lexiconFile)
+SpellChecker::SpellChecker(std::string filename)
 {
+	ifstream lexiconFile(filename.c_str());
+
+	// Insert words into BKTree.
+
+	string word;
+	while (getline(lexiconFile, word))
+	{
+		insert(word);
+	}
+
+
+	lexiconFile.close();
 }
 
+/**
+Insert word into BKTree.
 
+@param word Word to insert into the BKTree.
+@return True if the word was inserted (not a duplicate).
+*/
+bool SpellChecker::insert(const std::string& word)
+{
+	// Get the edit distance between the word and the one 
+	// contained in pNode.
+	SpellChecker::BKNode* pNode = _pRoot;
+	int editDistance = SpellChecker::editDistance(word, pNode->Word);
+	list<BKNode*>& children = _pRoot->Children;
 
+	//while ()
+}
 
+// TODO: Delete this?
+/**
+Helper function for insert in order to do recursive call.
+
+@param word Word to insert into th BKTree.
+@param pNode The current node.
+@return True if the word was inserted (not a duplicate).
+*/
+/*
+bool SpellChecker::insertAux(const std::string& word, BKNode*& pNode)
+{
+	//if (pNode == NULL)
+
+	// Get the edit distance between the word and the one 
+	// contained in pNode.
+	int editDistance = SpellChecker::editDistance(word, pNode->Word);
+
+	
+}
+*/
 
 // Utility function to find minimum of three numbers
 int min2(int x, int y, int z) 
