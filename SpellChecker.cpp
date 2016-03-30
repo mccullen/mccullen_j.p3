@@ -39,7 +39,7 @@ bool SpellChecker::insert(const std::string& word)
 	int editDistance = SpellChecker::editDistance(word, pNode->Word);
 	list<BKNode*>& children = _pRoot->Children;
 
-	//while ()
+	
 }
 
 // TODO: Delete this?

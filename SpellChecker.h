@@ -57,9 +57,8 @@ private:
 	class BKNode
 	{
 	public:
-		size_t EditDistance;
 		std::string Word;
-		std::list<BKNode*> Children;
+		std::map<size_t, BKNode*> EditDistanceToChild;
 	};
 
 	/**
