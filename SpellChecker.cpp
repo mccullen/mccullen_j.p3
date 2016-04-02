@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <fstream>
 
+#include <map>
 using namespace std;
 
 /**
@@ -35,14 +36,14 @@ bool SpellChecker::insert(const std::string& word)
 {
 	// Get the edit distance between the word and the one 
 	// contained in pNode.
-	SpellChecker::BKNode* pNode = _pRoot;
-	int editDistance = SpellChecker::editDistance(word, pNode->Word);
-	list<BKNode*>& children = _pRoot->Children;
-
-	
+	return insertAux(word, _pRoot);
 }
 
-// TODO: Delete this?
+
+SpellChecker::BKNode::BKNode(std::string word) : Word(word)
+{
+}
+
 /**
 Helper function for insert in order to do recursive call.
 
@@ -50,18 +51,35 @@ Helper function for insert in order to do recursive call.
 @param pNode The current node.
 @return True if the word was inserted (not a duplicate).
 */
-/*
 bool SpellChecker::insertAux(const std::string& word, BKNode*& pNode)
 {
-	//if (pNode == NULL)
-
 	// Get the edit distance between the word and the one 
 	// contained in pNode.
-	int editDistance = SpellChecker::editDistance(word, pNode->Word);
-
-	
+	int editDistance = SpellChecker::editDistance(word, 
+		pNode->Word);
+	bool retVal = false;
+	// If you didn't find the word
+	if (editDistance != 0)
+	{
+		map<size_t, BKNode*>::iterator iter;
+		iter = (pNode->EditDistanceToChild).find(editDistance);
+		// If the pNode has the editDistance
+		if (iter != (pNode->EditDistanceToChild).end())
+		{
+			// recursively traverse through the tree.
+			retVal = insertAux(word, (*iter).second);
+		
+		}
+		// Else, add it to the map.
+		else
+		{
+			(pNode->EditDistanceToChild)[editDistance] = 
+				new BKNode(word);
+			retVal = true;
+		}
+	}
+	return retVal;
 }
-*/
 
 // Utility function to find minimum of three numbers
 int min2(int x, int y, int z) 
@@ -157,4 +175,5 @@ Destruct a SpellChecker.
 */
 SpellChecker::~SpellChecker()
 {
+	// TODO: delete allocated memory!!
 }

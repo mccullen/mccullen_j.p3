@@ -9,6 +9,7 @@ Description:
 
 #include <string>
 #include <list>
+#include <map>
 
 
 class SpellChecker
@@ -57,6 +58,7 @@ private:
 	class BKNode
 	{
 	public:
+		BKNode(std::string word);
 		std::string Word;
 		std::map<size_t, BKNode*> EditDistanceToChild;
 	};
@@ -76,7 +78,7 @@ private:
 	@param pNode The current node.
 	@return True if the word was inserted (not a duplicate).
 	*/
-	//virtual bool insertAux(const std::string& word, BKNode*& pNode);
+	virtual bool insertAux(const std::string& word, BKNode*& pNode);
 
 	// Pointer to the root node of the word tree.
 	BKNode* _pRoot;
