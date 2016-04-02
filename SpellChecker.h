@@ -63,6 +63,16 @@ private:
 		std::map<size_t, BKNode*> EditDistanceToChild;
 	};
 
+	/** Determine if a word is in the tree.
+
+	@param word The word to determine if it is spelled correctly.
+	@param pNode Pointer to current node.
+	@return True if word is in the tree.
+	*/
+	bool lookup(std::string& word, BKNode* pNode, 
+		int allowableEditDistance, 
+		std::list<std::string>& listOfSuggestedWords);
+
 	/**
 	Insert word into BKTree.
 
@@ -79,6 +89,21 @@ private:
 	@return True if the word was inserted (not a duplicate).
 	*/
 	virtual bool insertAux(const std::string& word, BKNode*& pNode);
+
+	/**
+	Make the given word all uppercase.
+
+	@param word The word to make uppercase.
+	*/
+	virtual void makeUpperCase(std::string& word);
+
+	/**
+	Destroy the spell checker and any allocated memory in the
+	tree of words using a post order traversal.
+
+	@param pNode The current node.
+	*/
+	virtual void destroySpellChecker(BKNode*& pNode);
 
 	// Pointer to the root node of the word tree.
 	BKNode* _pRoot;

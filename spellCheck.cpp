@@ -37,42 +37,48 @@ int main(int argc, char** argv)
 
 	SpellChecker spellChecker("lexicon.txt");
 
+	string word;
+	string exitWord = "-1";
 	do
 	{
 		// Read in word from console
-		string word;
+		//cout << "Enter a word or " << exitWord << " to exit: ";
 		cin >> word;
 
-		// if word is spelled correctly, print spelled correctly.
-		if (spellChecker.spelledCorrectly(word))
+		if (word != exitWord)
 		{
-			cout << "Spelled Correctly\n";
-		}
-		// Else the word is not spelled correctly
-		else
-		{
-			// Get a list of suggested word.
-			list<string> suggestedWords = 
-				spellChecker.suggestWords(word,
-				editDistance);
-
-			if (suggestedWords.size() == 0)
+			cout << word << endl;
+			// if word is spelled correctly, print spelled correctly.
+			if (spellChecker.spelledCorrectly(word))
 			{
-				cout << "No suggestions\n";
+				cout << "Correctly Spelled" << endl;
 			}
+			// Else the word is not spelled correctly
 			else
 			{
-				// Print the suggested words
-				for (list<string>::iterator iter = suggestedWords.begin();
-					iter != suggestedWords.end(); ++iter)
+				// Get a list of suggested word.
+				list<string> suggestedWords = 
+					spellChecker.suggestWords(word,
+					editDistance);
+
+				if (suggestedWords.size() == 0)
 				{
-					cout << *iter << endl;
+					cout << "No suggestions" << endl;
 				}
+				else
+				{
+					// Print the suggested words
+					for (list<string>::iterator iter = suggestedWords.begin();
+						iter != suggestedWords.end(); ++iter)
+					{
+						cout << *iter << endl;
+					}
+				}
+
 			}
 
 		}
 
-
-	} while (true);
+	} while (word != exitWord);
 
 }

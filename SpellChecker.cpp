@@ -3,6 +3,7 @@
 #include "SpellChecker.h"
 #include <algorithm>
 #include <fstream>
+#include <iostream>
 
 #include <map>
 using namespace std;
@@ -17,13 +18,31 @@ SpellChecker::SpellChecker(std::string filename)
 	// Insert words into BKTree.
 
 	string word;
+	getline(lexiconFile, word);
+	makeUpperCase(word);
+	_pRoot = new BKNode(word);
 	while (getline(lexiconFile, word))
 	{
+		makeUpperCase(word);
 		insert(word);
 	}
 
+	map<size_t, BKNode*>::iterator iter = 
+		_pRoot->EditDistanceToChild.begin();
 
 	lexiconFile.close();
+}
+/**
+Make the given word all uppercase.
+
+@param word The word to make uppercase.
+*/
+void SpellChecker::makeUpperCase(std::string& word)
+{
+	for (size_t i = 0; i < word.size(); ++i)
+	{
+		word[i] = toupper(word[i]);
+	}
 }
 
 /**
@@ -155,6 +174,49 @@ Determine wheater a word is spelled correctly
 */
 bool SpellChecker::spelledCorrectly(std::string word)
 {
+
+	list<string> listOfSuggestedWords;
+	makeUpperCase(word);
+	lookup(word, _pRoot, 0, listOfSuggestedWords);
+	return listOfSuggestedWords.size() == 1;
+
+}
+/** Determine if a word is in the tree.
+
+@param word The word to determine if it is spelled correctly.
+@param pNode Pointer to current node.
+@return True if word is in the tree.
+*/
+bool SpellChecker::lookup(std::string& word, BKNode* pNode, 
+	int allowableEditDistance, 
+	std::list<std::string>& listOfSuggestedWords)
+{
+	int editDistance = SpellChecker::editDistance(word, pNode->Word);
+	int minDistance = editDistance - allowableEditDistance;
+	int maxDistance = editDistance + allowableEditDistance;
+
+	bool retVal = false;
+	if (editDistance <= allowableEditDistance)
+	{
+		listOfSuggestedWords.push_back(pNode->Word);
+		retVal = true;
+	}
+	//else if (editDistance != 0)
+	{
+		for (int i = minDistance; i <= maxDistance; ++i)
+		{
+			map<size_t, BKNode*>::iterator iter = 
+				(pNode->EditDistanceToChild).find(i);
+			if (iter != pNode->EditDistanceToChild.end())
+			{
+				retVal = lookup(word, 
+					(pNode->EditDistanceToChild)[i], 
+					allowableEditDistance,
+					listOfSuggestedWords);
+			}
+		}
+	}
+	return retVal;
 }
 
 /**
@@ -168,6 +230,33 @@ can be contained in the returned list.
 std::list<std::string> SpellChecker::suggestWords(std::string word, 
 	int givenEditDistance)
 {
+	list<string> listOfSuggestedWords;
+	makeUpperCase(word);
+	lookup(word, _pRoot, givenEditDistance, listOfSuggestedWords);
+	return listOfSuggestedWords;
+}
+
+/**
+Destroy the spell checker and any allocated memory in the
+tree of words using a post order traversal.
+
+@param pNode The current node.
+*/
+void SpellChecker::destroySpellChecker(BKNode*& pNode)
+{
+	if (pNode != NULL)
+	{
+		// For each child
+		for (map<size_t, BKNode*>::iterator iter = 
+			(pNode->EditDistanceToChild).begin();
+			iter != (pNode->EditDistanceToChild).end();
+			++iter)
+		{
+			destroySpellChecker((*iter).second);
+			//delete (*iter).second;
+		}
+		delete pNode;
+	}
 }
 
 /**
@@ -175,5 +264,5 @@ Destruct a SpellChecker.
 */
 SpellChecker::~SpellChecker()
 {
-	// TODO: delete allocated memory!!
+	destroySpellChecker(_pRoot);
 }
